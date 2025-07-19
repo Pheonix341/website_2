@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load cart_extras %}
+
+{% block content %}
+<div class="container mt-4">
+  <a href="{% url 'product_list' %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm mb-3">
+    ← НАЗАД
+  </a>
+
+  <h2 class="mb-4">🛒 Ваша корзина</h2>
+
+  {% if items %}
+    <ul class="list-group mb-4">
+      {% for item in items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            {{ item.product.name }}
+            <span class="ms-2 text-muted">{{ item.quantity }} × {{ item.product.price|intcomma }} сум</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <form method="post" action="{% url 'decrease_cart_quantity' item.product.id %}" class="d-inline me-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle">
+                <strong>−</strong>
+              </button>
+            </form>
+            <span class="me-2 fw-bold">{{ item.quantity }}</span>
+            <form method="post" action="{% url 'increase_cart_quantity' item.product.id %}" class="d-inline me-3">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-success btn-sm rounded-circle">
+                <strong>+</strong>
+              </button>
+            </form>
+            <span class="text-success fw-bold">{{ item.product.price|mul:item.quantity|intcomma }} сум</span>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Общая сумма -->
+    <div class="text-end">
+      <h5>Всего: <span class="text-primary fw-bold">{{ total_price|intcomma }} сум</span></h5>
+    </div>
+  {% else %}
+    <p>Корзина пуста.</p>
+  {% endif %}
+</div>
+{% endblock %}

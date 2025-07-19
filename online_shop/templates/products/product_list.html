@@ -1,0 +1,38 @@
+{% extends 'base.html' %} 
+{% load humanize %}
+
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- ФИЛЬТР ПО КАТЕГОРИЯМ -->
+  <h4 class="mb-3">Фильтр по категориям</h4>
+  <div class="btn-group mb-4" role="group">
+    <a href="{% url 'product_list' %}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">Все</a>
+    {% for category in categories %}
+      <a href="{% url 'products_by_category' category.slug %}" class="btn {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+        {{ category.name }}
+      </a>
+    {% endfor %}
+  </div>
+  <!-- СПИСОК ТОВАРОВ -->
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+            <p class="fw-bold text-primary">{{ product.price|intcomma }} сум</p>
+            <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+
+{% block content %}
+<div class="container mt-4">
+      <a href="{% url 'product_list' %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+  ← НАЗАД
+</a>
+<h1>{{ product.name }}</h1>
+<p>{{ product.description }}</p>
+<p>Цена: {{ product.price|intcomma }} сум</p>
+{% if product.image %}
+  <img src="{{ product.image.url }}" alt="" class="img-fluid" width="200">
+{% endif %}
+<div class="my-3">
+  <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-primary">Добавить в корзину</a>
+  <a href="{% url 'add_to_favorites' product.pk %}" class="btn btn-outline-danger">В избранное</a>
+</div>
+<h3>Отзывы:</h3>
+<ul class="list-group mb-3">
+  {% for review in reviews %}
+    <li class="list-group-item">{{ review.user.username }}: {{ review.content }} ({{ review.rating }}/5)</li>
+  {% endfor %}
+</ul>
+<form method="post" action="{% url 'submit_review' product.pk %}">
+  {% csrf_token %}
+  <div class="mb-2">
+    <textarea name="content" class="form-control" placeholder="Ваш отзыв..." required></textarea>
+  </div>
+  <div class="mb-2">
+    <input type="number" name="rating" min="1" max="5" value="5" class="form-control">
+  </div>
+  <button type="submit" class="btn btn-success">Оставить отзыв</button>
+</form>
+{% endblock %}
